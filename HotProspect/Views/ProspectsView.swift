@@ -48,7 +48,7 @@ struct ProspectsView: View {
                 let person = Prospect()
                 person.name = details[0]
                 person.emailAddress = details[1]
-                prospects.people.append(person)
+                prospects.add(person)
             case .failure(let error):
                 print(error.localizedDescription)
         }
@@ -56,43 +56,72 @@ struct ProspectsView: View {
     
     var body: some View {
         NavigationView {
-            List {
-                ForEach(filteredProspects) { prospect in
-                    VStack(alignment: .leading) {
-                        Text(prospect.name)
-                            .font(.headline)
-                        Text(prospect.emailAddress)
+            ZStack {
+                if filteredProspects.count == 0 {
+                    switch filter {
+                        case .none:
+                            VStack {
+                                Text("Contact list is empty")
+                                    .font(.title)
+                                Text("Scan a QR code to add a contact")
+                            }
+                            .foregroundColor(.secondary)
+                        case .contacted:
+                            VStack {
+                                Text("Contacted list is empty")
+                                    .font(.title)
+                                Text("Contacted people will be listed here")
+                            }
+                            .foregroundColor(.secondary)
+                        case .uncontacted:
+                            VStack {
+                                Text("Uncontacted list is empty")
+                                    .font(.title)
+                                Text("Uncontacted people will be listed here")
+                            }
                             .foregroundColor(.secondary)
                     }
-                    .swipeActions {
-                        if prospect.isContacted {
-                            Button {
-                                prospects.toggleContacted(prospect)
-                            } label: {
-                                Label("Mark Uncontacted", systemImage: "person.crop.circle.badge.xmark")
+                }
+                List {
+                    ForEach(filteredProspects) { prospect in
+                        VStack(alignment: .leading) {
+                            Text(prospect.name)
+                                .font(.headline)
+                            Text(prospect.emailAddress)
+                                .foregroundColor(.secondary)
+                        }
+                        .swipeActions {
+                            if prospect.isContacted {
+                                Button {
+                                    prospects.toggleContacted(prospect)
+                                } label: {
+                                    Label("Mark Uncontacted", systemImage: "person.crop.circle.badge.xmark")
+                                }
+                                .tint(.blue)
+                            } else {
+                                Button {
+                                    prospects.toggleContacted(prospect)
+                                } label: {
+                                    Label("Mark Contacted", systemImage: "person.crop.circle.fill.badge.checkmark")
+                                }
+                                .tint(.green)
                             }
-                            .tint(.blue)
-                        } else {
-                            Button {
-                                prospects.toggleContacted(prospect)
-                            } label: {
-                                Label("Mark Contacted", systemImage: "person.crop.circle.fill.badge.checkmark")
-                            }
-                            .tint(.green)
                         }
                     }
                 }
-            }
-            .navigationTitle(title)
-            .toolbar {
-                Button {
-                    isShowingScanner = true
-                } label: {
-                    Label("Scan", systemImage: "qrcode.viewfinder")
+                .navigationTitle(title)
+                .toolbar {
+                    if filter == .none {
+                        Button {
+                            isShowingScanner = true
+                        } label: {
+                            Label("Scan", systemImage: "qrcode.viewfinder")
+                        }
+                    }
                 }
-            }
-            .sheet(isPresented: $isShowingScanner) {
-                CodeScannerView(codeTypes: [.qr], simulatedData: "jg", completion: handleScan)
+                .sheet(isPresented: $isShowingScanner) {
+                    CodeScannerView(codeTypes: [.qr], simulatedData: "jg", completion: handleScan)
+                }
             }
         }
     }
