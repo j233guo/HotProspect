@@ -48,6 +48,7 @@ struct ProspectsView: View {
                 let person = Prospect()
                 person.name = details[0]
                 person.emailAddress = details[1]
+                prospects.people.append(person)
             case .failure(let error):
                 print(error.localizedDescription)
         }
@@ -62,6 +63,23 @@ struct ProspectsView: View {
                             .font(.headline)
                         Text(prospect.emailAddress)
                             .foregroundColor(.secondary)
+                    }
+                    .swipeActions {
+                        if prospect.isContacted {
+                            Button {
+                                prospects.toggleContacted(prospect)
+                            } label: {
+                                Label("Mark Uncontacted", systemImage: "person.crop.circle.badge.xmark")
+                            }
+                            .tint(.blue)
+                        } else {
+                            Button {
+                                prospects.toggleContacted(prospect)
+                            } label: {
+                                Label("Mark Contacted", systemImage: "person.crop.circle.fill.badge.checkmark")
+                            }
+                            .tint(.green)
+                        }
                     }
                 }
             }
