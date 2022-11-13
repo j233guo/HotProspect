@@ -64,6 +64,7 @@ struct ProspectsView: View {
                                 Text("Contact list is empty")
                                     .font(.title)
                                 Text("Scan a QR code to add a contact")
+                                    .font(.subheadline)
                             }
                             .foregroundColor(.secondary)
                         case .contacted:
@@ -71,6 +72,7 @@ struct ProspectsView: View {
                                 Text("Contacted list is empty")
                                     .font(.title)
                                 Text("Contacted people will be listed here")
+                                    .font(.subheadline)
                             }
                             .foregroundColor(.secondary)
                         case .uncontacted:
@@ -78,6 +80,7 @@ struct ProspectsView: View {
                                 Text("Uncontacted list is empty")
                                     .font(.title)
                                 Text("Uncontacted people will be listed here")
+                                    .font(.subheadline)
                             }
                             .foregroundColor(.secondary)
                     }
